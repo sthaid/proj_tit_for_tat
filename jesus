@@ -1,0 +1,13 @@
+#!/bin/bash
+
+while [ 1 = 1 ]; do
+  read cmd
+  if [ "$cmd" = GO ]; then
+    echo DEFEND
+  elif [ "$cmd" = TERM ]; then
+    exit 0
+  else  
+    echo "ERROR invalid cmd '$cmd'"
+    exit 1
+  fi
+done

@@ -15,6 +15,8 @@
 
 #include "utils.h"
 
+// xxx where is printf used in here
+
 // --------------------  CHILD PROCESS USING FORK & EXEC  ----------------------
 
 proc_hndl_t * proc_run(char *proc, ...)
@@ -25,6 +27,12 @@ proc_hndl_t * proc_run(char *proc, ...)
     int pid;
     va_list ap;
     proc_hndl_t *proc_hndl;
+    sigset_t set;
+
+    // block SIGPIPE
+    sigemptyset(&set);
+    sigaddset(&set,SIGPIPE);
+    sigprocmask(SIG_BLOCK, &set, NULL);
 
     // construct args array
     args[argc++] = proc;
@@ -36,7 +44,7 @@ proc_hndl_t * proc_run(char *proc, ...)
     }
     va_end(ap);
 
-#if 1
+#if 0
     // xxx
     int i;
     for (i = 0; i < argc+1; i++) {
@@ -68,6 +76,7 @@ proc_hndl_t * proc_run(char *proc, ...)
         dup2(pipe_from_child[1], 1);
 
         // execute the program
+        // xxx how does parent know if child has failed to start
         execvp(proc, args);
         fprintf(stderr, "ERROR: execvp %s, %s\n", proc, strerror(errno));
         exit(1);        
