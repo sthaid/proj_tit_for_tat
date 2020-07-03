@@ -17,6 +17,42 @@
 
 // xxx where is printf used in here
 
+int debug = 0;
+
+void logmsg(char *lvl, const char *func, char *fmt, ...)
+{
+    va_list ap;
+    char    msg[1000];
+    int     len;
+    bool    print_prefix;
+
+    // if fmt begins with '#' then do not print the prefix
+    print_prefix = (fmt[0] != '#');
+    if (print_prefix == false) {
+        fmt++;
+    }
+
+    // construct msg
+    va_start(ap, fmt);
+    vsnprintf(msg, sizeof(msg), fmt, ap);
+    va_end(ap);
+
+    // remove terminating newline
+    len = strlen(msg);
+    if (len > 0 && msg[len-1] == '\n') {
+        msg[len-1] = '\0';
+        len--;
+    }
+
+    // log to stderr 
+    if (print_prefix) {
+        fprintf(stderr, "%s %s: %s\n", lvl, func, msg);
+    } else {
+        fprintf(stderr, "%s\n", msg);
+    }
+}
+
+
 // --------------------  CHILD PROCESS USING FORK & EXEC  ----------------------
 
 proc_hndl_t * proc_run(char *proc, ...)
@@ -43,14 +79,6 @@ proc_hndl_t * proc_run(char *proc, ...)
         argc++;
     }
     va_end(ap);
-
-#if 0
-    // xxx
-    int i;
-    for (i = 0; i < argc+1; i++) {
-        printf("RUN_PGM PARENT  %d: %s\n", i, args[i]);
-    }
-#endif
 
     // create pipes for proc input and output
     // - pipefd[0] is read end, pipefd[1] is write end
@@ -114,7 +142,7 @@ void proc_wait_for_term(proc_hndl_t *h)
     int wstatus;
 
     waitpid(h->pid, &wstatus, 0);
-    printf("WAITPID %d %d\n", WIFEXITED(wstatus), WEXITSTATUS(wstatus));
+    //printf("WAITPID %d %d\n", WIFEXITED(wstatus), WEXITSTATUS(wstatus));
 
     fclose(h->fp_to_proc);
     fclose(h->fp_from_proc);

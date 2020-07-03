@@ -12,15 +12,42 @@
 
 #include "utils.h"
 
-// prototypes
+// XXX TODO
+// - update comments in jesus and lucifer
+// - timeout checking
+// - comments
+// - nicer output format, maybe curses
+// - some python scirpts
+// - make list of algorithms:  
+//       jesus
+//       lucifer
+//       mrs (massive retalitory strike),
+//       tft
+//       gtft
+//       tester
 
-void doit(char *player1, char *player2);
+//
+// defines
+//
+
+//
+// variables
+//
+
+//
+// prototypes
+//
+
+void simulate_conflict(char *player1, char *player2);
 
 // -------------------------------------------------------
 
 int main(int argc, char **argv)
 {
     struct rlimit rl;
+
+    // enable debug prints
+    debug = 1;
 
     // use linebuffering for stdout
     setlinebuf(stdout);
@@ -31,54 +58,90 @@ int main(int argc, char **argv)
     setrlimit(RLIMIT_CORE, &rl);
 
     // xxx
-    doit("jesus", "jesus");
+    //simulate_conflict("jesus", "jesus");
+    simulate_conflict("jesus", "lucifer");
 
     return 0;
 }
 
-void doit(char *player1, char *player2)
+void simulate_conflict(char *player0, char *player1)
 {
-    proc_hndl_t *h1, *h2;
-    char resp1[100], resp2[100];
-    int i;
+    proc_hndl_t *h[2];
+    char         response[2][100];
+    char         prior_response[2][100];
+    int          round, idx, health[2];
 
-    printf("PLAYERS:  %s %s\n", player1, player2);
+    #define PLAYERS_ACTIONS_ARE(r0,r1) (strcmp(response[0], (r0)) == 0 && \
+                                        strcmp(response[1], (r1)) == 0)
 
-    h1 = proc_run(player1, player1, NULL);  // xxx simplify
-    h2 = proc_run(player2, player1, NULL);
+    memset(health,0,sizeof(health));
+    memset(response,0,sizeof(response));
+    memset(prior_response,0,sizeof(prior_response));
 
-    for (i = 1; i <= 5; i++) {
-        printf("ROUND %d\n", i);
+    // xxx temp
+    DEBUG("simulate %12s %12s\n", player0, player1);
 
-        proc_printf(h1, "GO\n");
-        while (true) {
-            proc_gets(h1, resp1, sizeof(resp1));
-            if (strcmp(resp1, "ATTACK") == 0 || strcmp(resp1, "DEFEND") == 0) {
-                break;
-            }
-            printf("player1=%s response: %s\n", player1, resp1);
+    // xxx how to know if they both got created
+    h[0] = proc_run(player0, "0", NULL);
+    h[1] = proc_run(player1, "1", NULL);
+
+    // loop xxx explain
+    for (round = 1; round <= 3; round++) {
+        // xxx
+        for (idx = 0; idx <= 1; idx++) {
+            proc_printf(h[idx], "GO %s\n", prior_response[idx^1]);
+            proc_gets(h[idx], response[idx], sizeof(response[idx]));
         }
 
-        // xxx don't copy this code
-        proc_printf(h2, "GO\n");
-        while (true) {
-            proc_gets(h2, resp2, sizeof(resp2));
-            if (strcmp(resp2, "ATTACK") == 0 || strcmp(resp2, "DEFEND") == 0) {
-                break;
-            }
-            printf("player2=%s response: %s\n", player2, resp2);
+        strcpy(prior_response[0], response[0]);
+        strcpy(prior_response[1], response[1]);
+
+        // update player health
+        if (PLAYERS_ACTIONS_ARE("PASSIVE", "PASSIVE")) {
+            // no change 
+        } else if (PLAYERS_ACTIONS_ARE("ATTACK", "ATTACK")) {
+            // both lose 5 points
+            health[0] += -5;
+            health[1] += -5;
+        } else if (PLAYERS_ACTIONS_ARE("ATTACK", "PASSIVE")) {
+            // attacker gains 1 point and pacifast loses 10 points
+            health[0] +=  1;
+            health[1] += -10;
+        } else if (PLAYERS_ACTIONS_ARE("PASSIVE", "ATTACK")) {
+            // attacker gains 1 point and pacifast loses 10 points
+            health[0] += -10;
+            health[1] +=  1;
+        } else {
+            ERROR("players: '%s' '%s', responses: '%s' '%s'\n",
+                  player0, player1, response[0], response[1]);
+            exit(1);
         }
 
-        // XXX need to send to pgm the other responses and maintain health
-
-        printf("  %s %s\n", resp1, resp2);
+        DEBUG("%8d %12d %12d\n", round, health[0], health[1]);
     }
 
-    proc_printf(h1, "TERM\n");
-    proc_printf(h2, "TERM\n");
+    // xxx more comments
+    printf("%12s %5d %12s %5d\n", player0, health[0], player1, health[1]);
 
-    // xxx timeout on these, or at least debug print if they take a long time
-    proc_wait_for_term(h1);
-    proc_wait_for_term(h2);
+    proc_printf(h[0], "TERM\n");
+    proc_printf(h[1], "TERM\n");
 
+    proc_wait_for_term(h[0]);
+    proc_wait_for_term(h[1]);
 }
+
+#if 0
+        // if both players are PASSIVE
+        //   no change in either player's health
+        // else if both ATTACK
+        //   both players lose 5 health points
+        // else if player1 ATTACKs and player2 is PASSIVE
+        //   player1 health increases by 1
+        //   player2 health decreases by 10
+        // else if player2 ATTACKs and player1 is PASSIVE
+        //   player2 health increases by 1
+        //   player1 health decreases by 10
+        // endif
+
+
+#endif

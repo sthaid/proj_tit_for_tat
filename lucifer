@@ -34,7 +34,7 @@ while [ 1 = 1 ]; do
   read cmd other_player_last_action
   if [ "$cmd" = GO ]; then
     dbgpr GO cycle=$cycle  other_player_last_action=$other_player_last_action
-    echo PASSIVE
+    echo ATTACK
   elif [ "$cmd" = TERM ]; then
     dbgpr TERM
     exit 0
