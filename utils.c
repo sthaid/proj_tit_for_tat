@@ -52,7 +52,6 @@ void logmsg(char *lvl, const char *func, char *fmt, ...)
     }
 }
 
-
 // --------------------  CHILD PROCESS USING FORK & EXEC  ----------------------
 
 proc_hndl_t * proc_run(char *proc, ...)
@@ -106,7 +105,7 @@ proc_hndl_t * proc_run(char *proc, ...)
         // execute the program
         // xxx how does parent know if child has failed to start
         execvp(proc, args);
-        fprintf(stderr, "ERROR: execvp %s, %s\n", proc, strerror(errno));
+        ERROR("execvp %s, %s\n", proc, strerror(errno));
         exit(1);        
     } else {
         FILE *fp_to_proc;
@@ -152,6 +151,7 @@ void proc_wait_for_term(proc_hndl_t *h)
     free(h);
 }
 
+// xxx check for error
 void proc_printf(proc_hndl_t *h, char *fmt, ...)
 {
     va_list ap;
@@ -161,6 +161,7 @@ void proc_printf(proc_hndl_t *h, char *fmt, ...)
     va_end(ap);
 }
 
+// xxx check for error
 void proc_puts(proc_hndl_t *h, char *s)
 {
     fputs(s, h->fp_to_proc);
