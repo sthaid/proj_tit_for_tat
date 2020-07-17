@@ -18,11 +18,10 @@
 
 dbgpr() {
   if [ "$debug" = 1 ]; then
-    echo "DBGPR: $player $id: $@" 1>&2
+    echo "DBGPR: jesus $id: $@" 1>&2
   fi
 }
 
-player=$0
 id=$1
 debug=0
 cycle=0
