@@ -1,44 +1,36 @@
 #!/bin/bash
 
-# ARGS 
-# - arg1: id - useful only for debug prints
-#
-# DEBUG PRINTS
-# - direct debug prints to stderr
-#
-# INPUTS
-# - GO 
-# - GO ATTACK
-# - GO PASSIVE
-# - TERM
-#
-# OUTPUTS
-# - ATTACK
-# - PASSIVE
+ERROR() {
+  echo "$player-$id: ERROR: $@" 1>&2
+  exit
+}
 
-dbgpr() {
+DEBUG() {
   if [ "$debug" = 1 ]; then
-    echo "DBGPR: jesus $id: $@" 1>&2
+    echo "$player-$id: DEBUG: $@" 1>&2
   fi
 }
 
+player=$0
 id=$1
 debug=0
 cycle=0
 
-dbgpr STARTING
+DEBUG "STARTING id=$id"
 
 while [ 1 = 1 ]; do
   cycle=$((cycle + 1))
-  read cmd other_player_last_action
-  if [ "$cmd" = GO ]; then
-    dbgpr GO cycle=$cycle  other_player_last_action=$other_player_last_action
-    echo PASSIVE
+  read cmd arg
+  DEBUG "$cmd $arg"
+  if [ "$cmd" = "YESTERDAY_YOUR_OPPONENT" ]; then
+    if [ "$arg" != ATTACKED -a "$arg" != WAS_PASSIVE ]; then
+      ERROR "YESTERDAY_YOUR_OPPONENT invalid arg: '$arg'"
+    fi
+  elif [ "$cmd" = "WHAT_WILL_YOU_DO_TODAY?" ]; then
+    echo BE_PASSIVE
   elif [ "$cmd" = TERM ]; then
-    dbgpr TERM
     exit 0
   else  
-    dbgpr "INVALID_CMD $cmd"
-    exit 1
+    ERROR "INVALID_CMD $cmd"
   fi
 done

@@ -44,7 +44,10 @@ while True:
         yesterday_opponent_attacked = (cmd[1] == "ATTACKED")
         DEBUG("  yesterday_opponent_attacked =", yesterday_opponent_attacked)
     elif cmd[0] == "WHAT_WILL_YOU_DO_TODAY?":
-        print("ATTACK", flush=True)
+        if yesterday_opponent_attacked:
+            print("ATTACK", flush=True)
+        else:
+            print("BE_PASSIVE", flush=True)
     elif cmd[0] == "TERM":
         exit()
     else:

@@ -1,5 +1,7 @@
 #!/bin/python
 
+# XXX put pgm names in the files
+
 import os
 import sys
 
@@ -33,6 +35,8 @@ if id != "0" and id != "1":
 # runtime loop
 #
 
+massive_retaliatory_strike = False
+
 while True:
     cmd = input().split()
     DEBUG("RECEIVED", cmd)
@@ -41,10 +45,13 @@ while True:
         ERROR("blank line")
 
     if cmd[0] == "YESTERDAY_YOUR_OPPONENT":
-        yesterday_opponent_attacked = (cmd[1] == "ATTACKED")
-        DEBUG("  yesterday_opponent_attacked =", yesterday_opponent_attacked)
+        if cmd[1] == "ATTACKED":
+            massive_retaliatory_strike = True
     elif cmd[0] == "WHAT_WILL_YOU_DO_TODAY?":
-        print("ATTACK", flush=True)
+        if massive_retaliatory_strike:
+            print("ATTACK", flush=True)
+        else:
+            print("BE_PASSIVE", flush=True)
     elif cmd[0] == "TERM":
         exit()
     else:
