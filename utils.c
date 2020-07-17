@@ -17,7 +17,10 @@
 
 // xxx where is printf used in here
 
+// debug print defaults off
 int debug = 0;
+
+// --------------------  LOGGING  ----------------------------------------------
 
 void logmsg(char *lvl, const char *func, char *fmt, ...)
 {
@@ -52,7 +55,9 @@ void logmsg(char *lvl, const char *func, char *fmt, ...)
     }
 }
 
-// --------------------  CHILD PROCESS USING FORK & EXEC  ----------------------
+// --------------------  CREATE CHILD PROCESS USING FORK & EXEC  ----------------
+
+// xxx note on stderr
 
 proc_hndl_t * proc_run(char *proc, ...)
 {
