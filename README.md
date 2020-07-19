@@ -15,7 +15,7 @@ of the opposing player, as follows:
 * If one Attacks and Other Defends: Attacker gains 2, and Defender loses 10 health points.
 
 To run the simulation:
-* ./ctlr \<player\> \<player\> \<player\\> ...
+* ./ctlr \<player\> \<player\> \<player\> ...
 * Or, use the 'run' script to run ctlr for the players provided
 
 The ctlr program selects 2 players (opponents) to compete over 100 days period.
