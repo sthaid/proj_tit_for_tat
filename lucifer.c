@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 
         // process input cmd
         if (strcmp(cmd, "YESTERDAY_YOUR_OPPONENT") == 0) {
-            yesterday_opponent_attacked = (strcmp(arg, "ATTACKED") == 0);
+            yesterday_opponent_attacked = (strcmp(arg, "ATTACK") == 0);
             DEBUG("  yesterday_opponent_attacked = %d\n", yesterday_opponent_attacked);
         } else if (strcmp(cmd, "WHAT_WILL_YOU_DO_TODAY?") == 0) {
             printf("ATTACK\n");

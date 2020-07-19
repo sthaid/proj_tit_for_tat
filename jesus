@@ -23,11 +23,11 @@ while [ 1 = 1 ]; do
   read cmd arg
   DEBUG "$cmd $arg"
   if [ "$cmd" = "YESTERDAY_YOUR_OPPONENT" ]; then
-    if [ "$arg" != ATTACKED -a "$arg" != WAS_PASSIVE ]; then
+    if [ "$arg" != ATTACK -a "$arg" != DEFEND ]; then
       ERROR "YESTERDAY_YOUR_OPPONENT invalid arg: '$arg'"
     fi
   elif [ "$cmd" = "WHAT_WILL_YOU_DO_TODAY?" ]; then
-    echo BE_PASSIVE
+    echo DEFEND
   elif [ "$cmd" = TERM ]; then
     exit 0
   else  

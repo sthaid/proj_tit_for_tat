@@ -47,13 +47,13 @@ while True:
         ERROR("blank line")
 
     if cmd[0] == "YESTERDAY_YOUR_OPPONENT":
-        yesterday_opponent_attacked = (cmd[1] == "ATTACKED")
+        yesterday_opponent_attacked = (cmd[1] == "ATTACK")
         DEBUG("  yesterday_opponent_attacked =", yesterday_opponent_attacked)
     elif cmd[0] == "WHAT_WILL_YOU_DO_TODAY?":
         if yesterday_opponent_attacked and chance(90):
             print("ATTACK", flush=True)
         else:
-            print("BE_PASSIVE", flush=True)
+            print("DEFEND", flush=True)
     elif cmd[0] == "TERM":
         exit()
     else:

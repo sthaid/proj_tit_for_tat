@@ -1,5 +1,3 @@
-// XXX rename BE_PASSIVE to DEFEND
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -13,20 +11,6 @@
 #include <sys/wait.h>
 
 #include "utils.h"
-
-// XXX TODO
-// - update comments in jesus and lucifer
-// - timeout checking
-// - comments
-// - nicer output format, maybe curses
-// - some python scirpts
-// - make list of algorithms:  
-//       jesus
-//       lucifer
-//       mrs (massive retalitory strike),
-//       tft
-//       gtft
-//       tester
 
 //
 // defines
@@ -130,12 +114,12 @@ void simulate_conflict(char **player, int *health)
     #define PLAYERS_ACTIONS_ARE(r0,r1) (strcmp(response[0], (r0)) == 0 && \
                                         strcmp(response[1], (r1)) == 0)
 
-    #define MAX_DAY 100 //XXX
+    #define MAX_DAY 100
 
     memset(health,0,2*sizeof(int));
     memset(response,0,sizeof(response));
-    strcpy(prior_response[0], "BE_PASSIVE");
-    strcpy(prior_response[1], "BE_PASSIVE");
+    strcpy(prior_response[0], "DEFEND");
+    strcpy(prior_response[1], "DEFEND");
 
     // xxx temp
     DEBUG("simulate %12s %12s\n", player[0], player[1]);
@@ -149,9 +133,7 @@ void simulate_conflict(char **player, int *health)
         // xxx
         //xxx vheck ret here too
         for (idx = 0; idx <= 1; idx++) {
-            proc_printf(h[idx], "YESTERDAY_YOUR_OPPONENT %s\n", 
-                        (strcmp(prior_response[idx^1], "ATTACK") == 0 
-                         ? "ATTACKED" : "WAS_PASSIVE"));
+            proc_printf(h[idx], "YESTERDAY_YOUR_OPPONENT %s\n", prior_response[idx^1]);
 
             proc_printf(h[idx], "WHAT_WILL_YOU_DO_TODAY?\n");
 
@@ -165,17 +147,17 @@ void simulate_conflict(char **player, int *health)
         strcpy(prior_response[1], response[1]);
 
         // update player health
-        if (PLAYERS_ACTIONS_ARE("BE_PASSIVE", "BE_PASSIVE")) {
+        if (PLAYERS_ACTIONS_ARE("DEFEND", "DEFEND")) {
             // no change 
         } else if (PLAYERS_ACTIONS_ARE("ATTACK", "ATTACK")) {
             // both lose 5 points
             health[0] += -5;
             health[1] += -5;
-        } else if (PLAYERS_ACTIONS_ARE("ATTACK", "BE_PASSIVE")) {
+        } else if (PLAYERS_ACTIONS_ARE("ATTACK", "DEFEND")) {
             // attacker gains 1 point and pacifast loses 10 points
             health[0] +=  1;
             health[1] += -10;
-        } else if (PLAYERS_ACTIONS_ARE("BE_PASSIVE", "ATTACK")) {
+        } else if (PLAYERS_ACTIONS_ARE("DEFEND", "ATTACK")) {
             // attacker gains 1 point and pacifast loses 10 points
             health[0] += -10;
             health[1] +=  1;

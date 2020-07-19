@@ -45,13 +45,13 @@ while True:
         ERROR("blank line")
 
     if cmd[0] == "YESTERDAY_YOUR_OPPONENT":
-        if cmd[1] == "ATTACKED":
+        if cmd[1] == "ATTACK":
             massive_retaliatory_strike = True
     elif cmd[0] == "WHAT_WILL_YOU_DO_TODAY?":
         if massive_retaliatory_strike:
             print("ATTACK", flush=True)
         else:
-            print("BE_PASSIVE", flush=True)
+            print("DEFEND", flush=True)
     elif cmd[0] == "TERM":
         exit()
     else:

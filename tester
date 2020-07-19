@@ -48,20 +48,20 @@ while True:
         ERROR("blank line")
 
     if cmd[0] == "YESTERDAY_YOUR_OPPONENT":
-        yesterday_opponent_attacked = (cmd[1] == "ATTACKED")
+        yesterday_opponent_attacked = (cmd[1] == "ATTACK")
     elif cmd[0] == "WHAT_WILL_YOU_DO_TODAY?":
         if not attacking:
             if chance(10):
                 attacking = True;
                 print("ATTACK", flush=True)
             else:
-                print("BE_PASSIVE", flush=True)
+                print("DEFEND", flush=True)
         else:
             if not yesterday_opponent_attacked:
                 print("ATTACK", flush=True)
             else:
                 attacking = False;
-                print("BE_PASSIVE", flush=True)
+                print("DEFEND", flush=True)
     elif cmd[0] == "TERM":
         exit()
     else:
