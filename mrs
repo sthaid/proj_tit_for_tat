@@ -1,7 +1,5 @@
 #!/bin/python3
 
-# XXX put pgm names in the files
-
 import os
 import sys
 

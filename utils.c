@@ -15,8 +15,6 @@
 
 #include "utils.h"
 
-// xxx where is printf used in here
-
 // debug print defaults off
 int debug = 0;
 
@@ -57,7 +55,9 @@ void logmsg(char *lvl, const char *func, char *fmt, ...)
 
 // --------------------  CREATE CHILD PROCESS USING FORK & EXEC  ----------------
 
-// xxx note on stderr
+// notes:
+// - the child inherits stderr from parent
+// - the child code may need to specify line buffering for stdout
 
 proc_hndl_t * proc_run(char *proc, ...)
 {
@@ -103,12 +103,10 @@ proc_hndl_t * proc_run(char *proc, ...)
         close(pipe_from_child[0]);
 
         // attach the 2 pipes to stdin and stdout for the child
-        // xxx what about stderr
         dup2(pipe_to_child[0], 0);
         dup2(pipe_from_child[1], 1);
 
         // execute the program
-        // xxx how does parent know if child has failed to start
         execvp(proc, args);
         ERROR("execvp %s, %s\n", proc, strerror(errno));
         exit(1);        
@@ -128,7 +126,7 @@ proc_hndl_t * proc_run(char *proc, ...)
         // set fp write to proc line buffered
         setlinebuf(fp_to_proc);
 
-        // return proc_hndl to caller
+        // alloc and init the proc_hndl which will be returned to caller
         proc_hndl = malloc(sizeof(proc_hndl_t));
         proc_hndl->fd_to_proc = pipe_to_child[1];
         proc_hndl->fd_from_proc = pipe_from_child[0];
@@ -146,7 +144,7 @@ void proc_wait_for_term(proc_hndl_t *h)
     int wstatus;
 
     waitpid(h->pid, &wstatus, 0);
-    //printf("WAITPID %d %d\n", WIFEXITED(wstatus), WEXITSTATUS(wstatus));
+    DEBUG("WAITPID %d %d\n", WIFEXITED(wstatus), WEXITSTATUS(wstatus));
 
     fclose(h->fp_to_proc);
     fclose(h->fp_from_proc);
@@ -156,7 +154,6 @@ void proc_wait_for_term(proc_hndl_t *h)
     free(h);
 }
 
-// xxx check for error
 void proc_printf(proc_hndl_t *h, char *fmt, ...)
 {
     va_list ap;
@@ -166,19 +163,19 @@ void proc_printf(proc_hndl_t *h, char *fmt, ...)
     va_end(ap);
 }
 
-// xxx check for error
 void proc_puts(proc_hndl_t *h, char *s)
 {
     fputs(s, h->fp_to_proc);
 }
 
+// the terminating newline char is not returned to caller
 char * proc_gets(proc_hndl_t *h, char *s, int sizeofs)
 {
     assert(s && sizeofs > 0);
 
     s[0] = '\0';
-
     s = fgets(s, sizeofs, h->fp_from_proc);
+
     if (s != NULL) {
         int len = strlen(s);
         if (len > 0 && s[len-1] == '\n') {

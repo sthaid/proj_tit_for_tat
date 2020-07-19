@@ -66,7 +66,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    // xxx comment
+    // loop over all cobminations of 2 players, and
+    // call simulate_conflict for each combination
     for (i = 0; i < max_players_list; i++) {
         int sum_health = 0;
         printf("%s ...\n", players_list[i]);
@@ -79,16 +80,21 @@ int main(int argc, char **argv)
             printf("%12s %5d %12s %5d\n", player[0], health[0], player[1], health[1]);
             sum_health += health[0];
         }
+
+        // print average health of the first player
         printf("         ---------\n");
         printf("%12s %5d\n", "AVG", sum_health/max_players_list);
         printf("\n");
 
+        // store average health of the first player in a table, 
+        // so that a sorted list of players can be provided 
+        // once all player combinations have been executed
         health_score_tbl[i].name = players_list[i];
         health_score_tbl[i].health = sum_health/max_players_list;
     }
 
-    printf("\n");
-    printf("--------- SUMMARY -------------\n");
+    // print sorted list of player average health
+    printf("\n--------- SUMMARY -------------\n");
     qsort(health_score_tbl, max_players_list, sizeof(health_score_t), compare);
     for (i = 0; i < max_players_list; i++) {
         printf("%12s %5d\n", 
@@ -96,9 +102,11 @@ int main(int argc, char **argv)
                health_score_tbl[i].health);
     }
 
+    // done
     return 0;
 }
 
+// used by qsort
 int compare(const void *a, const void *b)
 {
     return ((health_score_t*)a)-> health <  ((health_score_t*)b)->health;
@@ -111,38 +119,38 @@ void simulate_conflict(char **player, int *health)
     char         prior_response[2][100];
     int          day, idx;
 
+    #define MAX_DAY 100
+
     #define PLAYERS_ACTIONS_ARE(r0,r1) (strcmp(response[0], (r0)) == 0 && \
                                         strcmp(response[1], (r1)) == 0)
 
-    #define MAX_DAY 100
+    DEBUG("simulate %12s %12s\n", player[0], player[1]);
 
+    // init local variables
     memset(health,0,2*sizeof(int));
     memset(response,0,sizeof(response));
     strcpy(prior_response[0], "DEFEND");
     strcpy(prior_response[1], "DEFEND");
 
-    // xxx temp
-    DEBUG("simulate %12s %12s\n", player[0], player[1]);
-
-    // xxx how to know if they both got created
+    // execute the programs for player[0] and player[1];
+    // the returned handles 'h[0] and h[1]' are used by the subsequent code
+    //  to communicate with the two player programs
     h[0] = proc_run(player[0], "0", NULL);
     h[1] = proc_run(player[1], "1", NULL);
 
-    // loop xxx explain
+    // loop over the 100 days of competition
     for (day = 1; day <= MAX_DAY; day++) {
-        // xxx
-        //xxx vheck ret here too
+        // loop over both players, and 
+        // - inform them of what there opponent had done yesterday,
+        // - ask them what action (ATTACK or DEFEND) they will do today.
         for (idx = 0; idx <= 1; idx++) {
             proc_printf(h[idx], "YESTERDAY_YOUR_OPPONENT %s\n", prior_response[idx^1]);
-
             proc_printf(h[idx], "WHAT_WILL_YOU_DO_TODAY?\n");
-
             if (proc_gets(h[idx], response[idx], sizeof(response[idx])) == NULL) {
                 ERROR("no response from %s\n", player[idx]);
                 exit(1);
             }
         }
-
         strcpy(prior_response[0], response[0]);
         strcpy(prior_response[1], response[1]);
 
@@ -154,13 +162,13 @@ void simulate_conflict(char **player, int *health)
             health[0] += -5;
             health[1] += -5;
         } else if (PLAYERS_ACTIONS_ARE("ATTACK", "DEFEND")) {
-            // attacker gains 1 point and pacifast loses 10 points
-            health[0] +=  1;
+            // attacker gains 2 points and defender loses 10 points
+            health[0] +=  2;
             health[1] += -10;
         } else if (PLAYERS_ACTIONS_ARE("DEFEND", "ATTACK")) {
-            // attacker gains 1 point and pacifast loses 10 points
+            // attacker gains 2 points and defender loses 10 points
             health[0] += -10;
-            health[1] +=  1;
+            health[1] +=  2;
         } else {
             ERROR("players: '%s' '%s', responses: '%s' '%s'\n",
                   player[0], player[1], response[0], response[1]);
@@ -170,6 +178,8 @@ void simulate_conflict(char **player, int *health)
         DEBUG("%8d %12d %12d\n", day, health[0], health[1]);
     }
 
+    // the 100 days of competition are over:
+    // reqest both players Terminate, and wait for them to do so
     proc_printf(h[0], "TERM\n");
     proc_printf(h[1], "TERM\n");
 
