@@ -1,7 +1,0 @@
-#!/bin/bash
-
-while [ 1 = 1 ]; do
-  read -t 1  x
-  echo GOT $x
-  sleep 1
-done
