@@ -48,7 +48,11 @@ except for jesus which is written in bash, and lucifer which is written in C.
 * gtft (generous-tit-for-tat): almost always responds to an attack with a counter-attack
 * mrs (massive retaliatory strike): defends until attacked, once attacked 
   will always respond with attack
+* mrs20 (massive retaliatory strike): defends until attacked, once attacked 
+  will respond with attack for 20 days
 * tester: will occasionally attack, and continue attacking until other player attacks
+* tft_tester: combined tft and tester 
+* gtft_tester: combined gtft and tester 
 
 ## Some Other Uses
 

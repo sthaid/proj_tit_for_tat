@@ -59,7 +59,7 @@ while True:
             test_attack = chance(10)
 
         if test_attack:
-            print("ATTACK", flush=True)
+            print("ATTACK")
         else:
             print("ATTACK" if (yesterday_opponent_attacked and chance(90)) else "DEFEND")
 

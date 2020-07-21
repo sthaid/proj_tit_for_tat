@@ -48,9 +48,9 @@ while True:
     elif cmd[0] == "WHAT_WILL_YOU_DO_TODAY?":
         if massive_retaliatory_strike > 0:
             massive_retaliatory_strike -= 1
-            print("ATTACK", flush=True)
+            print("ATTACK")
         else:
-            print("DEFEND", flush=True)
+            print("DEFEND")
     elif cmd[0] == "TERM":
         exit()
     else:

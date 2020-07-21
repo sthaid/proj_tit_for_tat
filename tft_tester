@@ -59,12 +59,9 @@ while True:
             test_attack = chance(10)
 
         if test_attack:
-            print("ATTACK", flush=True)
+            print("ATTACK")
         else:
-            if yesterday_opponent_attacked:
-                print("ATTACK", flush=True)
-            else:
-                print("DEFEND", flush=True)
+            print("ATTACK" if (yesterday_opponent_attacked) else "DEFEND")
 
     elif cmd[0] == "TERM":
         exit()
