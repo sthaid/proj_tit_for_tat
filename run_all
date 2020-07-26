@@ -1,0 +1,10 @@
+#!/bin/bash
+
+players=
+for p in *; do
+  if [[ -x $p && ! -d $p && $p != ctlr && $p != run && $p != run_all ]]; then
+    players="$players $p"
+  fi
+done
+
+./ctlr $players

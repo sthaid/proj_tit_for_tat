@@ -85,6 +85,8 @@ int main(int argc, char **argv)
             ERROR("unexpected cmd '%s'\n", cmd);
         }
     }
+
+    return 0;
 }
 
 static void remove_newline(char *s)
