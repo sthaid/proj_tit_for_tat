@@ -2,7 +2,15 @@
 
 ## References
 
-[Generous Tit For Tat: A Winning Strategy](https://www.forbes.com/sites/rogerkay/2011/12/19/generous-tit-for-tat-a-winning-strategy/#1eb99df466eb)
+* [Prisoner's Dilemma](https://www.investopedia.com/terms/p/prisoners-dilemma.asp#:~:text=The%20prisoner's%20dilemma%20is%20a,expense%20of%20the%20other%20participant.)
+> The prisoner's dilemma is a paradox in decision analysis in which two individuals 
+> acting in their own self-interests do not produce the optimal outcome. The typical 
+> prisoner's dilemma is set up in such a way that both parties choose to protect 
+> themselves at the expense of the other participant. As a result, both participants 
+> find themselves in a worse state than if they had cooperated with each other in the 
+> decision-making process. The prisoner's dilemma is one of the most well-known concepts in 
+> modern game theory.
+* [Generous Tit For Tat: A Winning Strategy](https://www.forbes.com/sites/rogerkay/2011/12/19/generous-tit-for-tat-a-winning-strategy/#1eb99df466eb)
 
 ## Overview
 
@@ -16,7 +24,7 @@ of the opposing player, as follows:
 
 To run the simulation:
 * ./ctlr \<player\> \<player\> \<player\> ...
-* Or, use the 'run' script to run ctlr for the players provided
+* Or, use the 'run_all' script to run ctlr for all of the players provided
 
 The ctlr program selects 2 players (opponents) to compete over 100 days period.
 Each day the 2 players are faced with prisoner's dilemma, to Attack or Defend. The player's
